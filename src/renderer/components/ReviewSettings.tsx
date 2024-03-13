@@ -1,7 +1,16 @@
-import { Button, Divider, Flex, Group, Input, Stack, Textarea } from "@mantine/core";
+import {
+  Button,
+  Divider,
+  Flex,
+  Group,
+  Input,
+  Stack,
+  Textarea,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
+import { ReviewItem } from '../types';
 
 type ReviewSettingsFormValues = {
   hostA: string;
@@ -44,6 +53,16 @@ export function ReviewSettings() {
     });
   };
 
+  const handleResetExistingPaths = () => {
+    const reviewItems: ReviewItem[] = window.electron.store.get('reviewItems');
+    const updatedReviewItems = reviewItems.map((item) => ({
+      ...item,
+      status: 'pending',
+    }));
+
+    window.electron.store.set('reviewItems', updatedReviewItems);
+  };
+
   return (
     <Stack>
       <form onSubmit={form.onSubmit((values) => handleSave(values))}>
@@ -70,6 +89,12 @@ export function ReviewSettings() {
 
         <Divider mt="xl" />
       </form>
+
+      <Flex direction="row">
+        <Button mt="auto" miw="100px" onClick={handleResetExistingPaths}>
+          Reset existing paths
+        </Button>
+      </Flex>
 
       <Flex direction="row">
         <Group grow wrap="nowrap" w="100%" mr="md">
